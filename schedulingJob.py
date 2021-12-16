@@ -4,11 +4,11 @@ DAILY_EXECUTION_LENGTH = 8
 
 
 class Job:
-    def __init__(self):
-        self.id = 0
-        self.description = ""
-        self.maxCompletionDate = datetime.now()
-        self.estimatedExecutionDuration = 0
+    def __init__(self, id, description, max_completion_date, estimated_execution_duration):
+        self.id = id
+        self.description = description
+        self.maxCompletionDate = max_completion_date
+        self.estimatedExecutionDuration = estimated_execution_duration
 
     def maxStartDate(self):
         return self.maxCompletionDate - timedelta(hours=self.estimatedExecutionDuration)
