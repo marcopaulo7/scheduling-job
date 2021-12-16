@@ -1,5 +1,6 @@
 import unittest
 from schedulingJob import *
+from datetime import datetime
 
 testArray = [Job(1, 'Importação de arquivos de fundos', datetime.fromisoformat('2019-11-10 12:00:00'), 2),
              Job(2, 'Importação de dados da Base Legada', datetime.fromisoformat('2019-11-11 12:00:00'), 4),
