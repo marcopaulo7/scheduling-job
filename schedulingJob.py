@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
 from operator import methodcaller
+
 DAILY_EXECUTION_LENGTH = 8
 
 
 class Job:
-    def __init__(self, id, description, max_completion_date, estimated_execution_duration):
-        self.id = id
+    def __init__(self, new_id, description, max_completion_date, estimated_execution_duration):
+        self.id = new_id
         self.description = description
         self.maxCompletionDate = max_completion_date
         self.estimatedExecutionDuration = estimated_execution_duration
@@ -17,14 +18,14 @@ class Job:
         return self.maxCompletionDate - timedelta(hours=self.estimatedExecutionDuration)
 
 
-def sortJobsByCompletionDateTime(jobs_to_sort):
+def sortJobsByStartDateTime(jobs_to_sort):
     jobs_to_sort.sort(key=methodcaller('maxStartDate'))
 
 
-def checkIfValidJobForExecution(job, execution_window, available_execution_length):
-    return job.estimatedExecutionDuration <= available_execution_length \
-           and job.maxStartDate() >= execution_window[0] \
-           and job.maxCompletionDate <= execution_window[1]
+def checkIfValidJobForExecution(job_to_check, execution_window, available_execution_length):
+    return job_to_check.estimatedExecutionDuration <= available_execution_length \
+           and job_to_check.maxStartDate() >= execution_window[0] \
+           and job_to_check.maxCompletionDate <= execution_window[1]
 
 
 def getJobExecutionSet(jobs_to_organize, execution_window):
@@ -35,15 +36,15 @@ def getJobExecutionSet(jobs_to_organize, execution_window):
     jobExecutionSet = []
     array = []
     availableExecutionTime = DAILY_EXECUTION_LENGTH
-    sortJobsByCompletionDateTime(jobs_to_organize)
-    for job in jobs_to_organize:
-        if checkIfValidJobForExecution(job, execution_window, availableExecutionTime):
-            availableExecutionTime -= job.estimatedExecutionDuration
-            array.append(job)
+    sortJobsByStartDateTime(jobs_to_organize)
+    for job_to_organize in jobs_to_organize:
+        if checkIfValidJobForExecution(job_to_organize, execution_window, availableExecutionTime):
+            availableExecutionTime -= job_to_organize.estimatedExecutionDuration
+            array.append(job_to_organize)
         else:
             jobExecutionSet.append(array.copy())
-            array = [job]
-            availableExecutionTime = DAILY_EXECUTION_LENGTH - job.estimatedExecutionDuration
+            array = [job_to_organize]
+            availableExecutionTime = DAILY_EXECUTION_LENGTH - job_to_organize.estimatedExecutionDuration
     jobExecutionSet.append(array.copy())
     return jobExecutionSet
 
@@ -61,9 +62,9 @@ def userJobInput():
     jobId = validateInput("\nEntre com o id do job: ", "Erro! Entre com um número válido para o id", int)
     description = validateInput("Entre com a descrição do job: ", "Erro! Entre com uma descrição válida", str)
     maxCompletionDate = validateInput("Entre com a data/hora (yyyy-MM-dd hh:mm:ss) limite para conclusão do job: ",
-                                   "Erro! Entre com um valor válido para a data", datetime.fromisoformat)
+                                      "Erro! Entre com um valor válido para a data", datetime.fromisoformat)
     estimatedExecutionDuration = validateInput("Entre com a duração do job em horas: ",
-                                            "Erro! Entre com um número válido para a quantidade de horas", int)
+                                               "Erro! Entre com um número válido para a quantidade de horas", int)
     print("\n")
     return Job(jobId, description, maxCompletionDate, estimatedExecutionDuration)
 
@@ -123,7 +124,7 @@ while True:
         print('\n')
     elif value == 5:
         exit(0)
+    elif value == 9:  # para teste
+        break
     else:
         print("Entre com um valor válido.")
-
-
